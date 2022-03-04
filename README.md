@@ -1,7 +1,3 @@
-# terraform-aws-website
-Host a static website in S3.
-
-
 Hosting a Static Website in AWS S3
 =============
 
