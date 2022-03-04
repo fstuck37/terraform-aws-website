@@ -3,6 +3,13 @@ variable "main_site" {
   type    = string
 }
 
+variable "buket_prefix" {
+  description = "Optional: True specifies to use the bucket_prefix instead of the bucket parameter when creating the S3 buckets. This ensures a unique name. You can override this to use bucket and ensure the bucket name is the name as the sites or redirect entries."
+  type    = bool
+  default = true
+}
+
+
 variable "file_path" {
   description = "Required: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible."
   type    = string
