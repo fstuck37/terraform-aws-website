@@ -40,6 +40,7 @@ variable "error_document" {
 }
 
 variable "context_types" {
+  description = "Optional : list of file extensions and their respective context types."
   type = map(string)
   default = {
     t = "text/troff"
