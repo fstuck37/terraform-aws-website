@@ -59,7 +59,7 @@ EOF
 }
 
 resource "aws_s3_bucket_object" "files" {
-  for_each = fileset(var.file_path, "**")
+  for_each = fileset(var.file_path, var.pattern)
     bucket       = aws_s3_bucket.website.id
     key          = each.value
     source       = "./files/${each.value}"
