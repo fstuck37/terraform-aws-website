@@ -1,8 +1,8 @@
 /* Main S3 Bucket for Main Site */
 resource "aws_s3_bucket" "website" {
 
-  bucket        = !buket_prefix ? var.main_site : null
-  bucket_prefix = buket_prefix ? var.main_site : null
+  bucket        = !var.buket_prefix ? var.main_site : null
+  bucket_prefix = var.buket_prefix ? var.main_site : null
   acl           = "public-read"
 
   website {
@@ -33,8 +33,8 @@ EOF
 /* www redirect */
 resource "aws_s3_bucket" "redirects" {
   for_each = { for s in var.redirects : s => s }
-    bucket        = !buket_prefix ? each.value : null
-    bucket_prefix = buket_prefix ? each.value : null
+    bucket        = !var.buket_prefix ? each.value : null
+    bucket_prefix = var.buket_prefix ? each.value : null
  
     acl    = "public-read"
     website {
