@@ -21,13 +21,11 @@ variable "pattern" {
   default = "**"
 }
 
-/*
 variable "redirects" {
   description = "Optional : Bool to deploy redirect bucket that sends are requests to the main site. Defaults to false"
   type    = bool
   default = false
 }
-*/
 
 /*
 variable "redirects" {
