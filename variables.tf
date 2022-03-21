@@ -9,7 +9,6 @@ variable "buket_prefix" {
   default = true
 }
 
-
 variable "file_path" {
   description = "Required: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible."
   type    = string
@@ -27,13 +26,6 @@ variable "redirects" {
   default = false
 }
 
-/*
-variable "redirects" {
-  description = "Optional : The sites that will redirect to the main site. For example www.geek37.com redirects to main site geek37.com."
-  type    = list(string)
-  default = []
-}
-*/
 variable "index_document" {
   description = "Optional : the default file to load defaults to index.html"
   type    = string

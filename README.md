@@ -19,7 +19,7 @@ module "website" {
   source     = "git::https://github.com/fstuck37/terraform-aws-website.git"
   main_site  = "geek37.com"
   file_path  = "./files/"
-  redirects  = ["www.geek37.net", "www.geek37.com", "geek37.com"]
+  redirects  = true
 }
 ```
 
@@ -29,7 +29,7 @@ Argument Reference
    * **buket_prefix** - Optional: True specifies to use the bucket_prefix instead of the bucket parameter when creating the S3 buckets. This ensures a unique name. You can override this to use bucket and ensure the bucket name is the name as the sites or redirect entries.
    * **file_path** - Required: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible.
    * **pattern** - Optional: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible. Defaults to **
-   * **redirects** - Optional : The sites that will redirect to the main site. For example www.geek37.com redirects to main site geek37.com.
+   * **redirects** - Optional : Bool to deploy redirect bucket that sends are requests to the main site. Defaults to false
    * **index_document** - Optional : the default file to load defaults to index.html
    * **error_document** - Optional : the default error file to load when a file is not found. Defaults to error.html
    * **context_types** - Optional : list of file extensions and their respective context types.
