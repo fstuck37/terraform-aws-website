@@ -41,7 +41,7 @@ resource "aws_s3_bucket" "redirects" {
     bucket_prefix = each.key
     acl    = "public-read"
     website {
-      redirect_all_requests_to = http://${var.main_site}
+      redirect_all_requests_to = "http://${var.main_site}"
     }
     policy = <<EOF
 {
