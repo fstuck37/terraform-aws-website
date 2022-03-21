@@ -39,7 +39,7 @@ EOF
 /* www redirect */
 resource "aws_s3_bucket" "redirects" {
   for_each = { for i in ["${var.main_site}-r"] : i => var.redirects
-             if length(var.redirects)>0 }
+             if var.redirects }
     bucket_prefix = each.key
     acl    = "public-read"
     website {
@@ -49,7 +49,7 @@ resource "aws_s3_bucket" "redirects" {
 
 resource "aws_s3_bucket_policy" "redirects" {
   for_each = { for i in ["${var.main_site}-r"] : i => var.redirects
-             if length(var.redirects)>0 }
+             if var.redirects }
   bucket = aws_s3_bucket.redirects[each.key].id
   policy = <<EOF
 {
