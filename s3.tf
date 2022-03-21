@@ -63,7 +63,7 @@ resource "aws_s3_bucket_policy" "redirects" {
                 "s3:GetObject"
             ],
             "Resource": [
-                "${aws_s3_bucket.redirects.arn}/*"
+                "${aws_s3_bucket.redirects[each.key].arn}/*"
             ]
         }
     ]
