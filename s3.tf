@@ -35,6 +35,7 @@ EOF
 }
 
 /* www redirect */
+/*
 resource "aws_s3_bucket" "redirects" {
   for_each = { for i in ["${var.main_site}-r"] : i => var.redirects
              if length(var.redirects)>0 }
@@ -60,8 +61,8 @@ resource "aws_s3_bucket" "redirects" {
 }
 EOF
 }
+*/
 
-/*
 resource "aws_s3_bucket" "redirects" {
   for_each = { for s in var.redirects : s => s }
     bucket        = !var.buket_prefix ? each.value : null
@@ -91,7 +92,6 @@ resource "aws_s3_bucket" "redirects" {
 }
 EOF
 }
-*/
 
 
 resource "aws_s3_bucket_object" "files" {
