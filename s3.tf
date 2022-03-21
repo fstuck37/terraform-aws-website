@@ -4,7 +4,6 @@ locals {
 
 /* Main S3 Bucket for Main Site */
 resource "aws_s3_bucket" "website" {
-
   bucket        = !var.buket_prefix ? var.main_site : null
   bucket_prefix = var.buket_prefix ? var.main_site : null
   acl           = "public-read"
@@ -49,7 +48,9 @@ resource "aws_s3_bucket" "redirects" {
 }
 
 resource "aws_s3_bucket_policy" "redirects" {
-  bucket = aws_s3_bucket.redirects.id
+  for_each = { for i in ["${var.main_site}-r"] : i => var.redirects
+             if length(var.redirects)>0 }
+  bucket = aws_s3_bucket.redirects[each.key].id
   policy = <<EOF
 {
     "Version": "2012-10-17",
