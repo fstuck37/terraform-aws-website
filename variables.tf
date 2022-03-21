@@ -21,12 +21,21 @@ variable "pattern" {
   default = "**"
 }
 
+/*
+variable "redirects" {
+  description = "Optional : Bool to deploy redirect bucket that sends are requests to the main site. Defaults to false"
+  type    = bool
+  default = false
+}
+*/
+
+/*
 variable "redirects" {
   description = "Optional : The sites that will redirect to the main site. For example www.geek37.com redirects to main site geek37.com."
   type    = list(string)
   default = []
 }
-
+*/
 variable "index_document" {
   description = "Optional : the default file to load defaults to index.html"
   type    = string
