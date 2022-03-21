@@ -1,3 +1,7 @@
+local {
+ resource = [for i in var.redirects : "arn:aws:s3:::${i}/*"]
+}
+
 /* Main S3 Bucket for Main Site */
 resource "aws_s3_bucket" "website" {
 
@@ -32,6 +36,33 @@ EOF
 
 /* www redirect */
 resource "aws_s3_bucket" "redirects" {
+  for_each = { for i in ["${var.main_site}-r"] : i => var.redirects
+             if length(var.redirects)>0 }
+    bucket_prefix = each.key
+    acl    = "public-read"
+    website {
+      redirect_all_requests_to = http://${var.main_site}
+    }
+    policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": ${local.resource}
+        }
+    ]
+}
+EOF
+}
+
+/*
+resource "aws_s3_bucket" "redirects" {
   for_each = { for s in var.redirects : s => s }
     bucket        = !var.buket_prefix ? each.value : null
     bucket_prefix = var.buket_prefix ? each.value : null
@@ -60,6 +91,8 @@ resource "aws_s3_bucket" "redirects" {
 }
 EOF
 }
+*/
+
 
 resource "aws_s3_bucket_object" "files" {
   for_each = fileset(var.file_path, var.pattern)
