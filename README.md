@@ -26,7 +26,6 @@ module "website" {
 Argument Reference
 ------------
    * **main_site** - Required: The site to host in AWS for example www.geek37.com or geek37.com. Must be lowercase and less than or equal to 37 characters in length.
-   * **buket_prefix** - Optional: True specifies to use the bucket_prefix instead of the bucket parameter when creating the S3 buckets. This ensures a unique name. You can override this to use bucket and ensure the bucket name is the name as the sites or redirect entries.
    * **file_path** - Required: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible.
    * **pattern** - Optional: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible. Defaults to **
    * **redirects** - Optional : List of sites that will redirect to the main site. For example www.geek37.com redirects to main site geek37.com.
