@@ -1,7 +1,7 @@
 /* Main S3 Bucket for Main Site */
 resource "aws_s3_bucket" "website" {
-  bucket        = !var.buket_prefix ? var.main_site : null
-  bucket_prefix = var.buket_prefix ? var.main_site : null
+
+  bucket        = var.main_site
   acl           = "public-read"
 
   website {
@@ -34,9 +34,8 @@ EOF
 
 /* www redirect */
 resource "aws_s3_bucket" "redirects" {
-  for_each = { for i in ["${var.main_site}-r"] : i => var.redirects
-             if var.redirects }
-    bucket_prefix = each.key
+  for_each = { for s in var.redirects : s => s }
+    bucket        = each.value
     acl    = "public-read"
     website {
       redirect_all_requests_to = "http://${var.main_site}"
@@ -44,8 +43,7 @@ resource "aws_s3_bucket" "redirects" {
 }
 
 resource "aws_s3_bucket_policy" "redirects" {
-  for_each = { for i in ["${var.main_site}-r"] : i => var.redirects
-             if var.redirects }
+  for_each = { for s in var.redirects : s => s }
   bucket = aws_s3_bucket.redirects[each.key].id
   policy = <<EOF
 {
@@ -59,7 +57,7 @@ resource "aws_s3_bucket_policy" "redirects" {
                 "s3:GetObject"
             ],
             "Resource": [
-                "${aws_s3_bucket.redirects[each.key].arn}/*"
+                "arn:aws:s3:::${each.key}/*"
             ]
         }
     ]

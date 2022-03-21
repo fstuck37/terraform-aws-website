@@ -3,12 +3,6 @@ variable "main_site" {
   type    = string
 }
 
-variable "buket_prefix" {
-  description = "Optional: True specifies to use the bucket_prefix instead of the bucket parameter when creating the S3 buckets. This ensures a unique name. You can override this to use bucket and ensure the bucket name is the name as the sites or redirect entries."
-  type    = bool
-  default = true
-}
-
 variable "file_path" {
   description = "Required: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible."
   type    = string
@@ -21,9 +15,9 @@ variable "pattern" {
 }
 
 variable "redirects" {
-  description = "Optional : Bool to deploy redirect bucket that sends are requests to the main site. Defaults to false"
-  type    = bool
-  default = false
+  description = "Optional : The sites that will redirect to the main site. For example www.geek37.com redirects to main site geek37.com."
+  type    = list(string)
+  default = []
 }
 
 variable "index_document" {
