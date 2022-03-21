@@ -1,7 +1,3 @@
-locals {
- resource = join(", ", [for i in var.redirects : "\"arn:aws:s3:::${i}/*\""])
-}
-
 /* Main S3 Bucket for Main Site */
 resource "aws_s3_bucket" "website" {
   bucket        = !var.buket_prefix ? var.main_site : null
