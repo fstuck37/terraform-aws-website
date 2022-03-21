@@ -41,4 +41,4 @@ Argument Reference
 Output Reference
 ------------
 * **website_endpoint** - Outputs the DNS entry for the main website. This should be used for the CNAME for the site.
-* **www_website_endpoint** - Outputs the DNS entry for each of the Redirect website. These should be used for the CNAME for the site.
+* **redirect_endpoints** - Outputs the DNS entry for each of the Redirect website. These should be used for the CNAME for the site.
