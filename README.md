@@ -29,7 +29,7 @@ Argument Reference
    * **file_path** - Required: The path to the files and folders to upload to S3. These should be in a folder by themselves as everything in the folder will be uploaded to S3 and publicly accessible.
    * **pattern** - Optional: Pattern to match for files. Defaults to **
        Supported pattern matches:
-       * * - matches any sequence of non-separator characters
+       * \* - matches any sequence of non-separator characters
        * ** - matches any sequence of characters, including separator characters
        * ? - matches any single non-separator character
        * See the Terraform [fileset](https://www.terraform.io/language/functions/fileset) command for more information.
