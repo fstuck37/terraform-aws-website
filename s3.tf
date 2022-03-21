@@ -1,4 +1,4 @@
-local {
+locals {
  resource = [for i in var.redirects : "arn:aws:s3:::${i}/*"]
 }
 
