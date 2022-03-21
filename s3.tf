@@ -56,7 +56,7 @@ resource "aws_s3_bucket" "redirects" {
                 "s3:GetObject"
             ],
             "Resource": [
-                "arn:aws:s3:::${each.value}/*"
+                "arn:aws:s3:::${each.key}/*"
             ]
         }
     ]
