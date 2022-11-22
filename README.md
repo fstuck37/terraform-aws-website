@@ -19,7 +19,7 @@ module "website" {
   source     = "git::https://github.com/fstuck37/terraform-aws-website.git"
   main_site  = "geek37.com"
   file_path  = "./files/"
-  redirects  = ["www.geek37.net", "www.geek37.com", "geek37.com"]
+  redirects  = ["www.geek37.net", "www.geek37.com", "geek37.net"]
 }
 ```
 
