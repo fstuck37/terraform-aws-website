@@ -9,3 +9,7 @@ output "redirect_endpoints" {
 output "bucket_regional_domain_name" {
   value = aws_s3_bucket.website.bucket_regional_domain_name
 }
+
+output "bucket" {
+  value = aws_s3_bucket.website.bucket
+}
