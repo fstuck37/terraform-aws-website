@@ -1,3 +1,17 @@
+/* Provider for TLS */
+terraform {
+  required_providers {
+    acme = {
+      source  = "vancluever/acme"
+      version = "~> 2.0"
+    }
+  }
+}
+
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
 /* Main S3 Bucket for Main Site */
 resource "aws_s3_bucket" "website" {
   bucket        = var.main_site
