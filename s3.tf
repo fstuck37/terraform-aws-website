@@ -113,14 +113,14 @@ data "aws_route53_zone" "base_domain" {
 }
 
 resource "tls_private_key" "private_key" {
-  count       = var.route54_zone == "none" ? 0 : 1
+  count       = var.route53_zone == "none" ? 0 : 1
   algorithm   = var.tls_algorithm
   ecdsa_curve = var.tls_ecdsa_curve
   rsa_bits    = var.tls_rsa_bits
 }
 
 resource "acme_registration" "registration" {
-  count       = var.route54_zone == "none" ? 0 : 1
+  count       = var.route53_zone == "none" ? 0 : 1
   account_key_pem = tls_private_key.private_key[0].private_key_pem
   email_address   = var.acme_registration_email_address
 }
