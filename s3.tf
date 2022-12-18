@@ -108,104 +108,111 @@ resource "aws_s3_object" "files" {
 
 /* Certificate */
 data "aws_route53_zone" "base_domain" {
-  count = var.route53_zone == "none" ? 0 : 1
-  name  = var.route53_zone
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.route53_zone != "none" }
+    name  = var.route53_zone
 }
 
 resource "tls_private_key" "private_key" {
-  count       = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
-  algorithm   = var.tls_algorithm
-  ecdsa_curve = var.tls_ecdsa_curve
-  rsa_bits    = var.tls_rsa_bits
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.enable_tls && var.route53_zone != "none" }
+    algorithm   = var.tls_algorithm
+    ecdsa_curve = var.tls_ecdsa_curve
+    rsa_bits    = var.tls_rsa_bits
 }
 
 resource "acme_registration" "registration" {
-  count           = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
-  account_key_pem = tls_private_key.private_key[0].private_key_pem
-  email_address   = var.acme_registration_email_address
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.enable_tls && var.route53_zone != "none" }
+    account_key_pem = tls_private_key.private_key[var.route53_zone].private_key_pem
+    email_address   = var.acme_registration_email_address
 }
 
 resource "acme_certificate" "certificate" {
-  count                     = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
-  account_key_pem           = acme_registration.registration[0].account_key_pem
-  common_name               = data.aws_route53_zone.base_domain[0].name
-  subject_alternative_names = ["*.${data.aws_route53_zone.base_domain[0].name}"]
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.enable_tls && var.route53_zone != "none" }
+    account_key_pem           = acme_registration.registration[var.route53_zone].account_key_pem
+    common_name               = data.aws_route53_zone.base_domain[var.route53_zone].name
+    subject_alternative_names = ["*.${data.aws_route53_zone.base_domain[var.route53_zone].name}"]
 
-  dns_challenge {
-    provider = "route53"
+    dns_challenge {
+      provider = "route53"
 
-    config = {
-      AWS_HOSTED_ZONE_ID = data.aws_route53_zone.base_domain[0].zone_id
+      config = {
+        AWS_HOSTED_ZONE_ID = data.aws_route53_zone.base_domain[var.route53_zone].zone_id
+      }
     }
-  }
 }
 
 resource "aws_acm_certificate" "certificate" {
-  count             = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
-  certificate_body  = acme_certificate.certificate[0].certificate_pem
-  private_key       = acme_certificate.certificate[0].private_key_pem
-  certificate_chain = acme_certificate.certificate[0].issuer_pem
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.enable_tls && var.route53_zone != "none" }
+    certificate_body  = acme_certificate.certificate[var.route53_zone].certificate_pem
+    private_key       = acme_certificate.certificate[var.route53_zone].private_key_pem
+    certificate_chain = acme_certificate.certificate[var.route53_zone].issuer_pem
 }
 
 // CloudFront Setup
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  count = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.enable_tls && var.route53_zone != "none" }
 }
 
 resource "aws_cloudfront_distribution" "prod_distribution" {
-  count = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
-  origin {
-    domain_name = aws_s3_bucket.website.bucket_regional_domain_name
-    origin_id = "S3-${aws_s3_bucket.website.bucket}"
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity[0].cloudfront_access_identity_path
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.enable_tls && var.route53_zone != "none" }
+    origin {
+      domain_name = aws_s3_bucket.website.bucket_regional_domain_name
+      origin_id = "S3-${aws_s3_bucket.website.bucket}"
+      s3_origin_config {
+        origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity[var.route53_zone].cloudfront_access_identity_path
+      }
     }
-  }
   
-  default_root_object = var.index_document
-  enabled = true
-  is_ipv6_enabled = true
-  aliases = [var.main_site]
+    default_root_object = var.index_document
+    enabled = true
+    is_ipv6_enabled = true
+    aliases = [var.main_site]
 
-  default_cache_behavior {
-    allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods = ["GET", "HEAD"]
-    target_origin_id = "S3-${aws_s3_bucket.website.bucket}"
+    default_cache_behavior {
+      allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      cached_methods = ["GET", "HEAD"]
+      target_origin_id = "S3-${aws_s3_bucket.website.bucket}"
     
-    forwarded_values {
-      query_string = true
-       cookies {
-          forward = "none"
-       }
+      forwarded_values {
+        query_string = true
+         cookies {
+            forward = "none"
+         }
+      }
+      viewer_protocol_policy = "redirect-to-https"
+      min_ttl                = 0
+      default_ttl            = 3600
+      max_ttl                = 86400
     }
-    viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-  }
-  
-  price_class = var.aws_cloudfront_price_class
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
+
+    price_class = var.aws_cloudfront_price_class
+    restrictions {
+      geo_restriction {
+        restriction_type = "none"
+      }
     }
-  }
   
-  # SSL certificate for the service.
-  viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate.certificate[0].arn
-    ssl_support_method = "sni-only"
-  }
+    # SSL certificate for the service.
+    viewer_certificate {
+      acm_certificate_arn = aws_acm_certificate.certificate[var.route53_zone].arn
+      ssl_support_method = "sni-only"
+    }
 }
 
 // DNS Setup
 resource "aws_route53_record" "main_record" {
   count = var.route53_zone == "none" ? 0 : 1
-  zone_id = data.aws_route53_zone.base_domain[0].zone_id
+  zone_id = data.aws_route53_zone.base_domain[var.route53_zone].zone_id
   name    = var.main_site
   type    = "CNAME"
   ttl     = 300
-  records = [var.route53_zone == "none" ? aws_s3_bucket.website.website_endpoint : aws_cloudfront_distribution.prod_distribution[0].domain_name]
+  records = [var.route53_zone == "none" ? aws_s3_bucket.website.website_endpoint : aws_cloudfront_distribution.prod_distribution[var.route53_zone].domain_name]
 }
 
 
