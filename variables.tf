@@ -32,6 +32,43 @@ variable "error_document" {
   default = "error.html"
 }
 
+variable "route53_zone" {
+  description = "Optional : The Route53 Zone to used to create the DNS entry in."
+  type    = string
+  default = "none"
+}
+
+variable "tls_algorithm" {
+  description = "Optional : (String) Name of the algorithm to use when generating the private key. Currently-supported values are: RSA, ECDSA, ED25519. Defaults to RSA"
+  type    = string
+  default = "RSA"
+}
+
+variable "tls_ecdsa_curve" {
+  description = "Optional : (String) When algorithm is ECDSA, the name of the elliptic curve to use. Currently-supported values are: P224, P256, P384, P521. (default: P224)."
+  type    = string
+  default = "P224"
+}
+
+variable "tls_rsa_bits" {
+  description = "Optional : (Number) When algorithm is RSA, the size of the generated RSA key, in bits (default: 2048)."
+  type    = number
+  default = 2048
+}
+
+
+variable "acme_registration_email_address" {
+  description = "Optional : (string) - The contact email address for the account. Required if TLS is utilized."
+  type    = string
+  default = "none"
+}
+
+variable "aws_cloudfront_price_class " {
+  description = "Optional : (string) - The price class for this distribution. One of PriceClass_All, PriceClass_200, PriceClass_100. Defaults to PriceClass_100."
+  type    = string
+  default = "PriceClass_100"
+}
+
 variable "context_types" {
   description = "Optional : list of file extensions and their respective context types."
   type = map(string)
