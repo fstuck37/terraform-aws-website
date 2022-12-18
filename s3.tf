@@ -63,7 +63,6 @@ resource "aws_s3_bucket_public_access_block" "example" {
 resource "aws_s3_bucket" "redirects" {
   for_each = { for s in var.redirects : s => s }
     bucket = each.value
-    acl    = "public-read"
 }
 
 resource "aws_s3_bucket_website_configuration" "redirects" {
@@ -127,7 +126,7 @@ resource "acme_registration" "registration" {
 }
 
 resource "acme_certificate" "certificate" {
-  count       = var.route54_zone == "none" ? 0 : 1
+  count       = var.route53_zone == "none" ? 0 : 1
   account_key_pem           = acme_registration.registration[0].account_key_pem
   common_name               = data.aws_route53_zone.base_domain[0].name
   subject_alternative_names = ["*.${data.aws_route53_zone.base_domain[0].name}"]
@@ -142,7 +141,7 @@ resource "acme_certificate" "certificate" {
 }
 
 resource "aws_acm_certificate" "certificate" {
-  count             = var.route54_zone == "none" ? 0 : 1
+  count             = var.route53_zone == "none" ? 0 : 1
   certificate_body  = acme_certificate.certificate[0].certificate_pem
   private_key       = acme_certificate.certificate[0].private_key_pem
   certificate_chain = acme_certificate.certificate[0].issuer_pem
@@ -150,11 +149,11 @@ resource "aws_acm_certificate" "certificate" {
 
 // CloudFront Setup
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  count = var.route54_zone == "none" ? 0 : 1
+  count = var.route53_zone == "none" ? 0 : 1
 }
 
 resource "aws_cloudfront_distribution" "prod_distribution" {
-  count = var.route54_zone == "none" ? 0 : 1
+  count = var.route53_zone == "none" ? 0 : 1
   origin {
     domain_name = aws_s3_bucket.website.bucket_regional_domain_name
     origin_id = "S3-${aws_s3_bucket.website.bucket}"
@@ -201,7 +200,7 @@ resource "aws_cloudfront_distribution" "prod_distribution" {
 
 // DNS Setup
 resource "aws_route53_record" "main_record" {
-  count = var.route54_zone == "none" ? 0 : 1
+  count = var.route53_zone == "none" ? 0 : 1
   zone_id = data.aws_route53_zone.base_domain[0].zone_id
   name    = var.main_site
   type    = "CNAME"
