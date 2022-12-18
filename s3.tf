@@ -212,7 +212,9 @@ resource "aws_route53_record" "main_record" {
   name    = var.main_site
   type    = "CNAME"
   ttl     = 300
-  records = [var.route53_zone == "none" ? aws_s3_bucket.website.website_endpoint : aws_cloudfront_distribution.prod_distribution[var.route53_zone].domain_name]
+  records = [lookup(lookup(aws_cloudfront_distribution.prod_distribution,var.route53_zone,aws_s3_bucket.website.website_endpoint),"domain_name",aws_s3_bucket.website.website_endpoint)]
 }
+
+
 
 
