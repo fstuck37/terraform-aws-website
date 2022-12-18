@@ -97,7 +97,7 @@ EOF
 }
 
 /* Add files to bucket */
-resource "aws_s3_bucket_object" "files" {
+resource "aws_s3_object" "files" {
   for_each = fileset(var.file_path, var.pattern)
     bucket       = aws_s3_bucket.website.id
     key          = each.value
