@@ -32,6 +32,12 @@ variable "error_document" {
   default = "error.html"
 }
 
+variable "enable_tls" {
+  description = "Optional : Enable TLS. Requires route53_zone to be set. Defaults to true."
+  type    = bool
+  default     = true
+}
+
 variable "route53_zone" {
   description = "Optional : The Route53 Zone to used to create the DNS entry in."
   type    = string
