@@ -40,7 +40,7 @@ EOF
 }
 
 resource "aws_s3_bucket_website_configuration" "website" {
-  bucket        = aws_s3_bucket.website
+  bucket = bucket = aws_s3_bucket.website.bucket
 
   error_document {
     key = var.error_document
