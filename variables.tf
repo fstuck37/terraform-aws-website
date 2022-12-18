@@ -63,7 +63,7 @@ variable "acme_registration_email_address" {
   default = "none"
 }
 
-variable "aws_cloudfront_price_class " {
+variable "aws_cloudfront_price_class" {
   description = "Optional : (string) - The price class for this distribution. One of PriceClass_All, PriceClass_200, PriceClass_100. Defaults to PriceClass_100."
   type    = string
   default = "PriceClass_100"
