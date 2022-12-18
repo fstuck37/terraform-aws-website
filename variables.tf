@@ -56,7 +56,6 @@ variable "tls_rsa_bits" {
   default = 2048
 }
 
-
 variable "acme_registration_email_address" {
   description = "Optional : (string) - The contact email address for the account. Required if TLS is utilized."
   type    = string
