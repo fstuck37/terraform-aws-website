@@ -206,15 +206,22 @@ resource "aws_cloudfront_distribution" "prod_distribution" {
 }
 
 // DNS Setup
-resource "aws_route53_record" "main_record" {
-  count = var.route53_zone == "none" ? 0 : 1
+resource "aws_route53_record" "cf_main_record" {
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if var.enable_tls && var.route53_zone != "none" }
   zone_id = data.aws_route53_zone.base_domain[var.route53_zone].zone_id
   name    = var.main_site
   type    = "CNAME"
   ttl     = 300
-  records = [lookup(lookup(aws_cloudfront_distribution.prod_distribution,var.route53_zone,aws_s3_bucket.website.website_endpoint),"domain_name",aws_s3_bucket.website.website_endpoint)]
+  records = [aws_cloudfront_distribution.prod_distribution[var.route53_zone].domain_name]
 }
 
-
-
-
+resource "aws_route53_record" "s3_main_record" {
+  for_each = { for s in tolist([var.route53_zone]) : var.route53_zone => var.route53_zone 
+               if !var.enable_tls && var.route53_zone != "none" }
+  zone_id = data.aws_route53_zone.base_domain[var.route53_zone].zone_id
+  name    = var.main_site
+  type    = "CNAME"
+  ttl     = 300
+  records = [aws_s3_bucket.website.website_endpoint]
+}
