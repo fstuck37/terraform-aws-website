@@ -175,7 +175,7 @@ resource "aws_cloudfront_distribution" "prod_distribution" {
     aliases = [var.main_site]
 
     default_cache_behavior {
-      allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      allowed_methods = ["GET", "HEAD"]
       cached_methods = ["GET", "HEAD"]
       target_origin_id = "S3-${aws_s3_bucket.website.bucket}"
     
@@ -187,8 +187,8 @@ resource "aws_cloudfront_distribution" "prod_distribution" {
       }
       viewer_protocol_policy = "redirect-to-https"
       min_ttl                = 0
-      default_ttl            = 3600
-      max_ttl                = 86400
+      default_ttl            = 600
+      max_ttl                = 3600
     }
 
     price_class = var.aws_cloudfront_price_class
