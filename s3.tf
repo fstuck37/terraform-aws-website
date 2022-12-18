@@ -113,20 +113,20 @@ data "aws_route53_zone" "base_domain" {
 }
 
 resource "tls_private_key" "private_key" {
-  count       = !var.enable_tls && var.route53_zone == "none" ? 0 : 1
+  count       = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
   algorithm   = var.tls_algorithm
   ecdsa_curve = var.tls_ecdsa_curve
   rsa_bits    = var.tls_rsa_bits
 }
 
 resource "acme_registration" "registration" {
-  count           = !var.enable_tls && var.route53_zone == "none" ? 0 : 1
+  count           = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
   account_key_pem = tls_private_key.private_key[0].private_key_pem
   email_address   = var.acme_registration_email_address
 }
 
 resource "acme_certificate" "certificate" {
-  count                     = !var.enable_tls && var.route53_zone == "none" ? 0 : 1
+  count                     = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
   account_key_pem           = acme_registration.registration[0].account_key_pem
   common_name               = data.aws_route53_zone.base_domain[0].name
   subject_alternative_names = ["*.${data.aws_route53_zone.base_domain[0].name}"]
@@ -141,7 +141,7 @@ resource "acme_certificate" "certificate" {
 }
 
 resource "aws_acm_certificate" "certificate" {
-  count             = !var.enable_tls && var.route53_zone == "none" ? 0 : 1
+  count             = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
   certificate_body  = acme_certificate.certificate[0].certificate_pem
   private_key       = acme_certificate.certificate[0].private_key_pem
   certificate_chain = acme_certificate.certificate[0].issuer_pem
@@ -149,11 +149,11 @@ resource "aws_acm_certificate" "certificate" {
 
 // CloudFront Setup
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  count = !var.enable_tls && var.route53_zone == "none" ? 0 : 1
+  count = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
 }
 
 resource "aws_cloudfront_distribution" "prod_distribution" {
-  count = !var.enable_tls && var.route53_zone == "none" ? 0 : 1
+  count = !var.enable_tls || var.route53_zone == "none" ? 0 : 1
   origin {
     domain_name = aws_s3_bucket.website.bucket_regional_domain_name
     origin_id = "S3-${aws_s3_bucket.website.bucket}"
