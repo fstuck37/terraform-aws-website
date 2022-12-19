@@ -80,6 +80,18 @@ variable "aws_cloudfront_price_class" {
   default = "PriceClass_100"
 }
 
+variable "aws_cloudfront_allowed_methods" {
+  description = "Optional : list(string) - Controls which HTTP methods CloudFront processes and forwards to your Amazon S3 bucket or your custom origin. Defaults to [GET, HEAD]"
+  type    = list(string)
+  default = ["GET", "HEAD"]
+}
+
+variable "aws_cloudfront_cached_methods" {
+  description = "Optional : list(string) - Controls whether CloudFront caches the response to requests using the specified HTTP methods. Defaults to [GET, HEAD]"
+  type    = list(string)
+  default = ["GET", "HEAD"]
+}
+
 variable "context_types" {
   description = "Optional : list of file extensions and their respective context types."
   type = map(string)

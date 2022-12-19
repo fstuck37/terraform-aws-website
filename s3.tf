@@ -170,13 +170,14 @@ resource "aws_cloudfront_distribution" "prod_distribution" {
     }
   
     default_root_object = var.index_document
+    http_version = "http2and3"
     enabled = true
     is_ipv6_enabled = true
     aliases = [var.main_site]
 
     default_cache_behavior {
-      allowed_methods = ["GET", "HEAD"]
-      cached_methods = ["GET", "HEAD"]
+      allowed_methods = var.aws_cloudfront_allowed_methods
+      cached_methods = var.aws_cloudfront_cached_methods
       target_origin_id = "S3-${aws_s3_bucket.website.bucket}"
     
       forwarded_values {
