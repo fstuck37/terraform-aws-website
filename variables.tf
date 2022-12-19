@@ -38,6 +38,12 @@ variable "enable_tls" {
   default     = true
 }
 
+variable "tls_minimum_protocol_version" {
+  description = "Optional : The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections. See all possible values in this table under Security policy. Default: TLSv1.2_2021"
+  type    = string
+  default = "TLSv1.2_2021"
+}
+
 variable "route53_zone" {
   description = "Optional : The Route53 Zone to used to create the DNS entry in."
   type    = string

@@ -202,6 +202,7 @@ resource "aws_cloudfront_distribution" "prod_distribution" {
     viewer_certificate {
       acm_certificate_arn = aws_acm_certificate.certificate[var.route53_zone].arn
       ssl_support_method = "sni-only"
+      minimum_protocol_version = var.tls_minimum_protocol_version
     }
 }
 
