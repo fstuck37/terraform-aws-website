@@ -225,5 +225,5 @@ resource "aws_route53_record" "s3_main_record" {
   name    = var.main_site
   type    = "CNAME"
   ttl     = 300
-  records = [aws_s3_bucket.website.website_endpoint]
+  records = [aws_s3_bucket_website_configuration.website.website_endpoint]
 }
